@@ -14,6 +14,7 @@ Skills are modular, self-contained packages that extend agent capabilities by pr
 
 | Skill | Description |
 |-------|-------------|
+| [feishu-image-sender](skills/feishu-image-sender/) | Send screenshots and local images to Feishu (Lark) chat - solves OpenClaw's direct image sending limitation |
 | [telegram-proxy-setup](skills/telegram-proxy-setup/) | Configure Telegram bot channel when behind HTTP/SOCKS5 proxy |
 
 ## How to Use
