@@ -1,10 +1,12 @@
 #!/bin/bash
 # 阿里云百炼 文生图 Skill (通义万相 wanx-v1)
-# Usage: qwen-image.sh "prompt"
+# Usage: qwen-image.sh "prompt" [telegram|feishu|both]
 
 PROMPT="${1:-一只可爱的猫咪}"
+TARGET="${2:-telegram}"  # telegram, feishu, or both
 API_KEY="${DASHSCOPE_API_KEY:-sk-6aec5554356d4f2bba5d397b46c013f5}"
 FEISHU_CHAT_ID="${FEISHU_CHAT_ID:-ou_00380781f62e46ba159213ff4b779cc6}"
+TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID:-7966240102}"
 
 echo "🎨 生成图片: $PROMPT"
 
@@ -50,7 +52,7 @@ for i in {1..30}; do
     echo "✅ 图片生成成功！"
     
     # 下载图片
-    OUTPUT_DIR="${QWEN_IMAGE_OUTPUT:-~/.openclaw/workspace/generated}"
+    OUTPUT_DIR="${QWEN_IMAGE_OUTPUT:-$HOME/.openclaw/workspace/generated}"
     mkdir -p "$OUTPUT_DIR"
     FILENAME="qwen_$(date +%Y%m%d_%H%M%S).png"
     OUTPUT_PATH="$OUTPUT_DIR/$FILENAME"
@@ -59,10 +61,24 @@ for i in {1..30}; do
     
     if [ -f "$OUTPUT_PATH" ]; then
       echo "💾 已保存: $OUTPUT_PATH"
-      echo "📤 发送到飞书..."
       
-      # 使用 web-screenshot 的 feishu_send_image.py 发送
-      python3 "$HOME/.openclaw/skills/web-screenshot/feishu_send_image.py" "$OUTPUT_PATH" "$FEISHU_CHAT_ID"
+      # 发送到指定渠道
+      if [ "$TARGET" = "feishu" ] || [ "$TARGET" = "both" ]; then
+        echo "📤 发送到飞书..."
+        python3 "$HOME/.openclaw/skills/web-screenshot/feishu_send_image.py" "$OUTPUT_PATH" "$FEISHU_CHAT_ID"
+      fi
+      
+      if [ "$TARGET" = "telegram" ] || [ "$TARGET" = "both" ]; then
+        echo "📤 发送到 Telegram..."
+        # 使用 OpenClaw 的 message 工具发送
+        echo "请手动发送或使用: openclaw message send --media $OUTPUT_PATH"
+        echo "文件路径: $OUTPUT_PATH"
+      fi
+      
+      # 如果 both，保留文件；否则删除
+      if [ "$TARGET" != "both" ]; then
+        rm -f "$OUTPUT_PATH"
+      fi
     else
       echo "❌ 下载图片失败"
       echo "🔗 图片链接: $IMAGE_URL"
