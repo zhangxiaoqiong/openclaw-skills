@@ -1,28 +1,29 @@
 #!/bin/bash
 # 腾讯研究院 AI 速递自动抓取
-# 使用搜狐媒体号固定网址获取当天文章
 
 TARGET_DATE="${1:-$(date +%Y%m%d)}"
-SOHU_MEDIA="https://m.sohu.com/media/455313?strategyid=00014"
+SOHU_MEDIA="https://m.sohu.com/media/455313"
 
 echo "🔍 抓取 AI 速递 $TARGET_DATE"
 echo "📡 访问搜狐媒体号..."
 
-# 提取前5个文章链接
+# 提取前3个文章链接
 LINKS=$(google-chrome --headless --disable-gpu \
   --dump-dom \
-  --run-all-compositor-stages-before-draw \
-  --virtual-time-budget=20000 \
+  --virtual-time-budget=15000 \
   "$SOHU_MEDIA" 2>/dev/null | \
-  grep -oE 'https://m\.sohu\.com/a/[0-9]+_455313' | \
-  awk '!seen[$0]++' | head -5)
+  grep -oE 'https://m\.sohu\.com/a/[0-9]+_455313[^"]*' | \
+  sed 's/&amp;scm=.*//' | \
+  awk '!seen[$0]++' | head -3)
 
 if [ -z "$LINKS" ]; then
   echo "❌ 未获取到文章列表"
   exit 1
 fi
 
-echo "找到文章链接，检查前5个..."
+echo "找到前3个链接:"
+echo "$LINKS"
+echo ""
 
 # 检查每个链接
 for url in $LINKS; do
