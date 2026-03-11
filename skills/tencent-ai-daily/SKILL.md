@@ -1,20 +1,70 @@
-# Tencent AI Daily Skill
+# AI速递 + 小红书发布 Skill
 
-自动抓取腾讯研究院 AI 速递每日文章
+自动抓取腾讯研究院 AI 速递，并发布到小红书
 
-## Usage
+## 功能
+
+1. **获取AI速递内容** - 从搜狐抓取每日AI新闻（自动获取当天最新）
+2. **整理成小红书文案** - 改成emoji + 详细描述格式
+3. **发布到小红书** - 自动填写内容并发布
+
+## 使用方法
 
 ```bash
+# 获取今天的AI速递并发布到小红书
+~/.openclaw/skills/tencent-ai-daily/publish-xiaohongshu.sh
+
+# 只获取内容，不发布
 ~/.openclaw/skills/tencent-ai-daily/fetch.sh [YYYYMMDD]
 ```
 
-## How it works
+## 发布流程
 
-1. Visit Sohu media page
-2. Extract article links
-3. Match by date
-4. Fetch and display
+1. 获取AI速递内容（从搜狐抓取当天最新）
+2. 整理成小红书格式：
+   - 每条新闻用emoji + 详细描述
+   - 包含关键数据和细节
+   - 最多5个标签（基于内容生成）
+3. 浏览器打开小红书创作者平台
+4. **完整自动化流程**：
+   - 点击"写长文"
+   - 填标题：今日AI必看｜YYYY.MM.DD
+   - 填正文（详细版，包含更多细节和数据）
+   - 等待2-3秒自动保存
+   - 点击"一键排版"
+   - 直接点"下一步"
+   - 再次填标题：今日AI必看｜YYYY.MM.DD
+   - 填正文描述（简短描述）
+   - 点"下一步"
+   - 点"发布"
+
+## 自动化要点（重要！）
+
+- ✅ 先填标题，再填正文
+- ✅ 正文内容要详细，包含关键数据和细节
+- ✅ 内容填入后等待2-3秒自动保存
+- ✅ 一键排版后直接点下一步
+- ✅ 填标题后再填正文描述
+- ✅ 最后直接点发布
+
+## 内容格式参考（详细版）
+
+```
+📌Claude推出多智能体代码审查系统
+Anthropic为Claude Code引入多智能体代码审查系统，每次PR自动调度智能体团队结合完整代码库上下文并行寻找缺陷，部署后获得实质性审查意见的PR比例从16%飙升至54%
+
+🇨🇳LeCun创办企业完成10.3亿美元种子轮
+图灵奖得主Yann LeCun创办的AMI Labs完成10.3亿美元种子轮融资估值达35亿美元，DiT架构提出者谢赛宁加盟担任首席科学官
+
+🔥微软发布Copilot Cowork全面接管Office
+微软发布Copilot Cowork全面接管Excel、Word、PPT和Outlook，采用Anthropic Claude模型驱动推理，定价为M365企业版基础上额外30美元/月
+
+...
+
+正文描述：今日AI必看｜2026.03.11 - 带你了解最新AI动态
+```
 
 ## Source
 
-https://m.sohu.com/media/455313
+- AI速递：https://m.sohu.com/media/455313
+- 小红书：https://creator.xiaohongshu.com

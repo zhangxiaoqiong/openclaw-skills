@@ -34,7 +34,24 @@ for url in $LINKS; do
     echo "🔗 $url"
     echo ""
     echo "========== 内容 =========="
-    curl -s "$url" 2>/dev/null | grep -E "^一、|^二、|^三、|^四、|^五、|^六、|^七、|^八、" | head -10
+    curl -s "$url" 2>/dev/null | \
+      sed 's/<[^>]*>//g' | \
+      tr '\n' ' ' | \
+      sed 's/  */ /g' | \
+      grep -oE '一、GPT[^👋]+' | \
+      sed 's/二、/\\n\\n二、/g' | \
+      sed 's/三、/\\n\\n三、/g' | \
+      sed 's/四、/\\n\\n四、/g' | \
+      sed 's/五、/\\n\\n五、/g' | \
+      sed 's/六、/\\n\\n六、/g' | \
+      sed 's/七、/\\n\\n七、/g' | \
+      sed 's/八、/\\n\\n八、/g' | \
+      sed 's/九、/\\n\\n九、/g' | \
+      sed 's/十、/\\n\\n十、/g' | \
+      sed 's/👋.*//' | \
+      sed 's/前沿科技.*//' | \
+      sed 's/报告观点.*//' | \
+      sed 's/if (window.*//'
     echo ""
     echo "🔗 原文: $url"
     exit 0
