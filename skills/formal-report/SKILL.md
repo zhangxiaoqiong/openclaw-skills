@@ -28,32 +28,71 @@ metadata:
 {
   "action": "create",
   "title": "报告标题",
-  "content": "Markdown格式的报告内容"
+  "content": "# 报告标题\n\n> 更新时间\n\n---"
 }
 ```
 
-### 2. 写入完整内容
+### 2. 检查文档是否为空
 
-将调研报告以完整 Markdown 格式写入文档，包含：
-- 标题和更新时间
-- 目录结构
-- 分章节详细内容
-- 数据来源说明
-- 相关链接
+创建后立即读取文档确认内容：
 
-### 3. 返回链接给用户
+```json
+{
+  "action": "read",
+  "doc_token": "刚才返回的 document_id"
+}
+```
 
-提供飞书文档链接，告知用户内容已保存。
+**关键检查**：如果返回的 content 只有一个标题（少于 10 个字符），说明内容没写入成功！
+
+### 3. 写入完整内容
+
+如果内容为空，使用 write action 重新写入：
+
+```json
+{
+  "action": "write",
+  "doc_token": "document_id",
+  "content": "完整的 Markdown 报告内容..."
+}
+```
+
+### 4. 再次验证
+
+写入后再次读取确认内容已写入。
+
+### 5. 返回链接给用户
+
+提供飞书文档链接：`https://feishu.cn/docx/[document_id]`
+
+## 完整代码示例
+
+```python
+# 1. 创建文档
+result = feishu_doc(action="create", title="调研报告", content="# 标题")
+doc_id = result["document_id"]
+
+# 2. 检查内容
+check = feishu_doc(action="read", doc_token=doc_id)
+if len(check["content"]) < 10:
+    # 3. 内容为空，重新写入
+    feishu_doc(action="write", doc_token=doc_id, content=完整报告)
+
+# 4. 返回链接
+return f"https://feishu.cn/docx/{doc_id}"
+```
 
 ## 优化提示
 
-- 首次创建文档后，如需更新内容可使用 `write` action
+- 创建文档后**必须检查** content 是否为空
+- 如果为空，**立即用 write action** 重新写入
+- 写入后**再次验证**确保成功
 - 文档链接格式：`https://feishu.cn/docx/[document_id]`
 - 保持内容结构清晰，使用表格、列表等 Markdown 格式
-- 结尾添加"仅供参考，以官方最新发布为准"的免责声明
 
 ## 禁止事项
 
 - 不要仅在聊天中输出长文报告
 - 不要创建本地文件后要求用户自行复制
-- 必须使用飞书文档方式提供
+- 不要假设创建文档就等于写入成功
+- 必须验证内容确实写入后再返回链接
